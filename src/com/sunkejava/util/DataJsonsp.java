@@ -21,25 +21,31 @@ import net.sf.json.JSONObject;
  * @author Administrator
  *
  */
-public class DataJson {
+/*
+*/
+public class DataJsonsp {
 	public static void main(String[] args) throws Exception {
-		JSONArray result22 = GetDate("YY","504525");//JSON及解析
-		System.out.println(result22);
-		JSONArray result23 = GetDate("YINYUETAI","2571488");//Json解析
-		//System.out.println(result23);
-		JSONArray result2 = GetDate("51AVI","699161");//XML解析+取文本
-		//System.out.println(result2);
+		/*for(int i = 0;i<YYnubs.length;i++){
+			System.out.println(YYnubs[i]);
+		}
+		*/
+
 	}
 	
 	
 	
-	public static JSONArray GetDate(String DataType,String ID) throws Exception{
+	public static JSONArray GetDate(String DataType,String[] ID) throws Exception{
 		String urls = null;
 		//创建组建后的Json对象存放的Array数组
 		JSONArray thisj = new JSONArray();
+		JSONArray pthisj = new JSONArray();
 		if(DataType == "YY"){
-			 urls = "http://www.yy.com/u/works/s?yyno="+ID+"&p=1";
+			System.out.println(ID.length);
+			for(int p = 0;p<ID.length;p++){
+				//System.out.println(ID[p]);
+				urls = "http://www.yy.com/u/works/s?yyno="+ID[p]+"&p=1";
 			//需要抛出异常
+				try{
 				URL url2 = new URL(urls);
 				BufferedReader bufr2 = new BufferedReader(new InputStreamReader(new BufferedInputStream(url2.openStream()),"utf-8"));
 				String line2;
@@ -48,29 +54,59 @@ public class DataJson {
 					sb2.append(line2);
 				}
 				bufr2.close();
-				//System.out.println(sb2.toString());
-				String maxpage = StringUtil.betweenSting(StringUtil.betweenSting(sb2.toString(), "pages", "data"),":",",");
-				//System.out.println("最大页数："+maxpage);
 				//将sb字符串转换为json对象
 				JSONObject jsn1 = JSONObject.fromObject(sb2.toString());
-				//JSONObject jsonobject2 = JSONObject.fromObject("{\""+"data"+StringUtil.rightString(sb2.toString(),"data"));
+				JSONArray presult = jsn1.getJSONArray("data");
+				JSONObject newjsonp = new JSONObject();
+				newjsonp.put("song_album_id",Integer.toString(p+1));
+				newjsonp.put("song_album",presult.getJSONObject(0).get("ownername"));
+				newjsonp.put("song_album1","来自YY神曲");
 				int Sumpage = (int) jsn1.get("pages");
-				//取的需要的数据data{}中的数据
-				JSONArray result2 = jsn1.getJSONArray("data");
-				System.out.println(jsn1);
-				System.out.println("result2:"+result2);
-				for(int i = 0;i<result2.size();i++ ){
-					JSONObject concent = (JSONObject) result2.get(i);
+				for(int j=0;j<Sumpage;j++){
+					String purls = "http://www.yy.com/u/works/s?yyno="+ID[p]+"&p="+(j+1);
+					//需要抛出异常
+					try{	
+					URL purl2 = new URL(purls);
+						BufferedReader pbufr2 = new BufferedReader(new InputStreamReader(new BufferedInputStream(purl2.openStream()),"utf-8"));
+						String pline2;
+						StringBuffer psb2 = new StringBuffer();
+						while((pline2 = pbufr2.readLine())!= null){
+							psb2.append(pline2);
+						}
+						pbufr2.close();
+						//将sb字符串转换为json对象
+						JSONObject pjsn1 = JSONObject.fromObject(psb2.toString());
+						JSONArray presult2 = pjsn1.getJSONArray("data");
+						
+				for(int i = 0;i<presult2.size();i++ ){
+					JSONObject concent = (JSONObject) presult2.get(i);
 					//获取需要的的内容并组成新的json对象2
 					JSONObject newjson = new JSONObject();
+					newjson.put("song_id", Integer.toString(i+1));
 					//获取神曲名称并加入新的Json对象中
-					newjson.put("songname",concent.get("songname"));
+					newjson.put("song_title",concent.get("songname"));
 					//获取神曲歌手并加入新的Json对象中
-					newjson.put("ownername", concent.get("ownername"));
+					newjson.put("singer", concent.get("ownername"));
+					newjson.put("album", concent.get("ownername"));
 					//获取歌曲播放地址并加入新的Json对象中
+					newjson.put("pic", concent.get("snapshoturl"));
 					newjson.put("resurl",concent.get("resurl"));
 					//将组建后的json对象数据加入到newarr数组中
-						thisj.add(newjson);
+					pthisj.add(newjson);
+						}
+					} catch (Exception e) {
+						thisj.add("请确认ID["+ID[p]+"]是否正确");
+						//System.out.println("请确认ID是否正确");
+						}
+				}
+				
+				newjsonp.put("song_list",pthisj);
+				pthisj.clear();
+				thisj.add(newjsonp);
+				} catch(Exception e){
+					thisj.add("请确认ID["+ID[p]+"]是否正确");
+					//System.out.println("请确认ID是否正确");
+					}
 				}
 		}else if(DataType == "YINYUETAI"){
 			 urls = "http://www.yinyuetai.com/api/info/get-video-urls?videoId="+ID;

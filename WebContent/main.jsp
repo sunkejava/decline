@@ -26,7 +26,7 @@
 		}
 		
 		function loadData(q,start){
-			$.getJSON("http://localhost:8080/Decline/indexn?jsoncallback=?",{q:q,start:start},function(result){
+			$.getJSON("http://123.56.131.190:8080/Decline/indexn?jsoncallback=?",{q:q,start:start},function(result){
 				if(result.length==0){
 					alert("温馨提示：未搜索到结果，请换个ID！");
 				}else{

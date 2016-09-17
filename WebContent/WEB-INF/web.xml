@@ -18,4 +18,13 @@
   	<servlet-name>index</servlet-name>
   	<url-pattern>/indexn</url-pattern>
   </servlet-mapping>
+  
+  <servlet>
+  	<servlet-name>indexs</servlet-name>
+  	<servlet-class>com.sunkejava.web.Searchindex</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>indexs</servlet-name>
+  	<url-pattern>/indexp</url-pattern>
+  </servlet-mapping>
 </web-app>
