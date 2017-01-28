@@ -1,2 +1,2 @@
 # decline
-MusicPlugin's Server心新坡你就新坡
+MusicPlugin's Server心新坡
