@@ -1,2 +1,2 @@
 # decline
-MusicPlugin's Server心新坡
+MusicPlugin's Server
